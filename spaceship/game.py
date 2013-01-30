@@ -20,10 +20,10 @@
 #  
 
 import pygame
-from ball import Ball
+from ship   import Ship
 from config import ConfigManager
-from space import Space
-from utils import *
+from space  import Space
+from utils  import *
 
 class Game:
   '''
@@ -33,9 +33,13 @@ class Game:
   def __init__ (self):
     pygame.init()
     pygame.key.set_repeat(10,10)
-    res = ConfigManager.get("resolution")
-    self.screen = pygame.display.set_mode(res, pygame.DOUBLEBUF)
-    self.ball = Ball()
+    res  = ConfigManager.get("resolution")
+    # Read and set fullscreen view
+    isFS = ConfigManager.get("fullscreen")
+    if isFS: FSFlag = pygame.HWSURFACE | pygame.FULLSCREEN
+    else:    FSFlag = 0
+    self.screen = pygame.display.set_mode(res, pygame.DOUBLEBUF | FSFlag)
+    self.ship = Ship()
     self.space = Space(res)
   
   def catchUserInput(self):
@@ -48,34 +52,35 @@ class Game:
           pygame.quit()
           exit()
         elif e.key == pygame.K_DOWN:
-          self.ball.decreaseSpeed()
+          self.ship.moveBackward()
         elif e.key == pygame.K_UP:
-          self.ball.increaseSpeed()
+          self.ship.moveForward()
         elif e.key == pygame.K_LEFT:
-          self.ball.moveLeft()
+          self.ship.rotateLeft()
         elif e.key == pygame.K_RIGHT:
-          self.ball.moveRight()
+          self.ship.rotateRight()
           
   def updateGameState(self):
-    self.ball.updateState() 
+    pass 
   
   def updateDisplay(self):
     self.screen.fill(BLACK)
     self.screen.blit(self.space, self.space.rect)
-    self.screen.blit(self.ball.image, self.ball.rect)
+    self.screen.blit(self.ship.image, self.ship.rect)
     if __debug__:
       #print "Debug mode: Draw sprite's rects"
-      pygame.draw.rect(self.screen, WHITE, self.ball.rect, 1)
+      pygame.draw.rect(self.screen, WHITE, self.ship.rect, 1)
       #print "Debug mode: Draw statistics"
       font = pygame.font.Font(None, 24)
-      speedMsg = "Spaceship speed: " + str(self.ball.speed)
-      posMsg = "Spaceship position: " + str(self.ball.rect)
+      speedMsg = "Spaceship angle: " + str(self.ship.angle)
+      posMsg = "Spaceship position: " + str(self.ship.rect)
       textS = font.render(speedMsg, 1, GREEN)
       textP = font.render(posMsg, 1, GREEN)
       self.screen.blit(textS, (10,10))
       self.screen.blit(textP, (10,25))
       
     pygame.display.flip()
+    # pygame.display.update(self.ship.rect)
     pygame.time.wait(1000 / 60)
 
   def run(self):

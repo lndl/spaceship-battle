@@ -22,6 +22,8 @@
 import pygame
 from ball import Ball
 from config import ConfigManager
+from space import Space
+from utils import *
 
 class Game:
   '''
@@ -32,8 +34,9 @@ class Game:
     pygame.init()
     pygame.key.set_repeat(10,10)
     res = ConfigManager.get("resolution")
-    self.screen = pygame.display.set_mode(res, pygame.DOUBLEBUF | pygame.FULLSCREEN)
+    self.screen = pygame.display.set_mode(res, pygame.DOUBLEBUF)
     self.ball = Ball()
+    self.space = Space(res)
   
   def catchUserInput(self):
     for e in pygame.event.get():
@@ -57,17 +60,18 @@ class Game:
     self.ball.updateState() 
   
   def updateDisplay(self):
-    self.screen.fill((0,0,0))
+    self.screen.fill(BLACK)
+    self.screen.blit(self.space, self.space.rect)
     self.screen.blit(self.ball.image, self.ball.rect)
     if __debug__:
       #print "Debug mode: Draw sprite's rects"
-      pygame.draw.rect(self.screen, (255,255,255), self.ball.rect, 1)
+      pygame.draw.rect(self.screen, WHITE, self.ball.rect, 1)
       #print "Debug mode: Draw statistics"
       font = pygame.font.Font(None, 24)
       speedMsg = "Spaceship speed: " + str(self.ball.speed)
       posMsg = "Spaceship position: " + str(self.ball.rect)
-      textS = font.render(speedMsg, 1, (0,0,255))
-      textP = font.render(posMsg, 1, (0,0,255))
+      textS = font.render(speedMsg, 1, GREEN)
+      textP = font.render(posMsg, 1, GREEN)
       self.screen.blit(textS, (10,10))
       self.screen.blit(textP, (10,25))
       

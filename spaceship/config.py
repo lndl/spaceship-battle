@@ -27,7 +27,7 @@ class ConfigManager:
   
   configurations = dict()
   
-  configurations["resolution"] = (1024,600)
+  configurations["resolution"] = (640, 480)
   
   def __init__(self):
     pass

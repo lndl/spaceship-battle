@@ -20,23 +20,10 @@
 #  
 
 import pygame
-from pygame.locals import *
-import os
 
 from config import ConfigManager
+from utils import *
 
-def load_image(filename, transparent=False):
-  try: 
-    image = pygame.image.load(os.path.join('images', filename))
-    #image = image.convert()
-    #if transparent:
-    #  color = image.get_at((0,0))
-    #  image.set_colorkey(color, RLEACCEL)
-    return image
-  except pygame.error, message:
-    print "Fallo la carga de una imagen"
-    raise SystemExit, message
-  
 WIDTH, HEIGHT = ConfigManager.get("resolution")  
     
 class Ball(pygame.sprite.Sprite):

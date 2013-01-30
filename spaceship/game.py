@@ -20,52 +20,66 @@
 #  
 
 import pygame
-from ball import *
+from ball import Ball
+from config import ConfigManager
 
-def catchUserInput(game):
-  for e in pygame.event.get():
-    if e.type == pygame.QUIT:
-      pygame.quit()
-      exit()
-    elif e.type == pygame.KEYDOWN:
-      if e.key == pygame.K_ESCAPE:
+class Game:
+  '''
+  Main game class
+  '''
+  
+  def __init__ (self):
+    pygame.init()
+    pygame.key.set_repeat(10,10)
+    res = ConfigManager.get("resolution")
+    self.screen = pygame.display.set_mode(res, pygame.DOUBLEBUF | pygame.FULLSCREEN)
+    self.ball = Ball()
+  
+  def catchUserInput(self):
+    for e in pygame.event.get():
+      if e.type == pygame.QUIT:
         pygame.quit()
         exit()
-      elif e.key == pygame.K_DOWN:
-        game["ball"].decreaseSpeed()
-      elif e.key == pygame.K_UP:
-        game["ball"].increaseSpeed()
-      elif e.key == pygame.K_LEFT:
-        game["ball"].moveLeft()
-      elif e.key == pygame.K_RIGHT:
-        game["ball"].moveRight()
-        
-def updateGameState(game):
-  game["ball"].updateState() 
-
-def updateDisplay(game):
-  game["screen"].fill((0,0,0))
-  game["screen"].blit(game["ball"].image, game["ball"].rect)
-  if __debug__:
-    #print "Debug mode: Draw sprite's rects"
-    pygame.draw.rect(game["screen"], (255,255,255), game["ball"].rect, 1)
-  pygame.display.flip()
-  pygame.time.wait(1000 / 60)
-
-def buildGame():
-  pygame.init()
-  pygame.key.set_repeat(10,10)
-  res = (640, 480)
-  game = dict()
-  game["screen"] = pygame.display.set_mode(res, pygame.DOUBLEBUF)
-  game["ball"] = Ball()
-  return game
+      elif e.type == pygame.KEYDOWN:
+        if e.key == pygame.K_ESCAPE:
+          pygame.quit()
+          exit()
+        elif e.key == pygame.K_DOWN:
+          self.ball.decreaseSpeed()
+        elif e.key == pygame.K_UP:
+          self.ball.increaseSpeed()
+        elif e.key == pygame.K_LEFT:
+          self.ball.moveLeft()
+        elif e.key == pygame.K_RIGHT:
+          self.ball.moveRight()
+          
+  def updateGameState(self):
+    self.ball.updateState() 
   
-def main():
-  game = buildGame()
-  while True:
-    catchUserInput(game)
-    updateGameState(game)
-    updateDisplay(game)
+  def updateDisplay(self):
+    self.screen.fill((0,0,0))
+    self.screen.blit(self.ball.image, self.ball.rect)
+    if __debug__:
+      #print "Debug mode: Draw sprite's rects"
+      pygame.draw.rect(self.screen, (255,255,255), self.ball.rect, 1)
+      #print "Debug mode: Draw statistics"
+      font = pygame.font.Font(None, 24)
+      speedMsg = "Spaceship speed: " + str(self.ball.speed)
+      posMsg = "Spaceship position: " + str(self.ball.rect)
+      textS = font.render(speedMsg, 1, (0,0,255))
+      textP = font.render(posMsg, 1, (0,0,255))
+      self.screen.blit(textS, (10,10))
+      self.screen.blit(textP, (10,25))
+      
+    pygame.display.flip()
+    pygame.time.wait(1000 / 60)
+
+  def run(self):
+    while True:
+      self.catchUserInput()
+      self.updateGameState()
+      self.updateDisplay()
     
-main()
+if __name__ == "__main__":
+  game = Game()
+  game.run()

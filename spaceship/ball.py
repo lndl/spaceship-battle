@@ -23,6 +23,8 @@ import pygame
 from pygame.locals import *
 import os
 
+from config import ConfigManager
+
 def load_image(filename, transparent=False):
   try: 
     image = pygame.image.load(os.path.join('images', filename))
@@ -35,10 +37,8 @@ def load_image(filename, transparent=False):
     print "Fallo la carga de una imagen"
     raise SystemExit, message
   
-# Resolutions
-HEIGHT = 480
-WIDTH = 640
-  
+WIDTH, HEIGHT = ConfigManager.get("resolution")  
+    
 class Ball(pygame.sprite.Sprite):
   '''
   Ball class (sprite)
@@ -54,10 +54,10 @@ class Ball(pygame.sprite.Sprite):
     self.dir = "UP"
 
   def increaseSpeed(self):
-    self.speed += 1
+    if self.speed < 10: self.speed += 1
     
   def decreaseSpeed(self):
-    self.speed -= 1
+    if self.speed > 0:  self.speed -= 1
 
   def moveLeft(self):
     if self.rect.centerx > 0:

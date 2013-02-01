@@ -27,8 +27,8 @@ class ConfigManager:
   
   configurations = dict()
   
-  configurations["resolution"] = (640, 480)
-  configurations["fullscreen"] = False
+  configurations["resolution"] = (640, 480) #(1024, 600)
+  configurations["fullscreen"] = False #True
   
   def __init__(self):
     pass

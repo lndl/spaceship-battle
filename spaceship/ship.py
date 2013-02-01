@@ -23,6 +23,7 @@ import pygame
 
 from config import ConfigManager
 from utils import *
+from vector import Vector2D
 
 WIDTH, HEIGHT = ConfigManager.get("resolution")  
     
@@ -35,8 +36,10 @@ class Ship(pygame.sprite.Sprite):
     pygame.sprite.Sprite.__init__(self)
     self.image = load_image("ship.png")
     self.rect = self.image.get_rect()
-    self.rect.centerx = HEIGHT / 2
-    self.rect.centery = WIDTH / 2
+    self.center = Vector2D.fromPoint((HEIGHT / 2, WIDTH / 2))
+    #self.rect.centerx = HEIGHT / 2
+    #self.rect.centery = WIDTH / 2
+    self.rect.center = self.center.toPoint()
     self.angle = 90
     self.__initImageCache()
     
@@ -47,27 +50,28 @@ class Ship(pygame.sprite.Sprite):
     '''
     self.cachedImages = []
     for angle in range(0,360,10):
-      self.cachedImages += [pygame.transform.rotate(self.image, angle)]
+      self.cachedImages += \
+      [pygame.transform.rotate(self.image, (angle - 90))]
 
   def moveBackward(self):
-    # pass
-    self.rect.centery += 5
+    self.center += Vector2D(5,0).rotate(self.angle).invX()
+    self.rect.center = self.center.toPoint()
     
   def moveForward(self):
-    # pass
-    self.rect.centery -= 5
+    self.center -= Vector2D(5,0).rotate(self.angle).invX()
+    self.rect.center = self.center.toPoint()
 
   def __rotate(self, angle):
-    old_self_rect_center  = self.rect.center
-    old_image_rect_center = self.image.get_rect().center
-    #if __debug__:
-    #  try: rotated_image = self.cachedImages[angle / 10]
-    #  except IndexError: print "Angle crash: %d" % angle
-    rotated_image = self.cachedImages[angle / 10]
-    new_image_rect_center = rotated_image.get_rect().center
-    self.rect.center = (old_self_rect_center[0] + (old_image_rect_center[0] - new_image_rect_center[0]), old_self_rect_center[1] + (old_image_rect_center[1] - new_image_rect_center[1]))
+    oldRectCenter = self.rect.center
+    if __debug__:
+      try: rotatedImage = self.cachedImages[angle / 10]
+      except IndexError: print "Angle crash: %d" % angle
+      print "Ship rect: " + str(self.rect)
+    else:
+      rotatedImage = self.cachedImages[angle / 10]
+    newImageRectCenter = rotatedImage.get_rect().center
 
-    self.image = rotated_image
+    self.image = rotatedImage
 
   def rotateLeft(self):
     if self.angle < 360 - 10: self.angle += 10

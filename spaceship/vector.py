@@ -23,7 +23,7 @@ import math
 
 class Vector2D:
   '''
-  A 2D math vector to represental several geometrics and physics
+  A 2D math vector to represent several geometrics and physics
   concepts 
   '''
   
@@ -89,6 +89,30 @@ class Vector2D:
     Return a new vector with x coordinate inverted 
     '''
     return Vector2D(-self.x, self.y)
+  
+  def invY(self):
+    ''' 
+    Return a new vector with y coordinate inverted 
+    '''
+    return Vector2D(self.x, -self.y)
+  
+  def normal(self):
+    ''' 
+    Return a new vector normalized 
+    '''
+    mag = self.magnitude()
+    return Vector2D(self.x / mag, self.y / mag)
+  
+  def angle(self):
+    ''' 
+    Return the angle between x-axis and this vector 
+    '''
+    if self.x > self.y:
+      radAngle = math.acos(1 / self.x)
+      return radAngle / math.pi * 180
+    else:
+      radAngle = math.asin(1 / self.y)
+      return radAngle / math.pi * 180
     
   def __str__(self):
     ''' 

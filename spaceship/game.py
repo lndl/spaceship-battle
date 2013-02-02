@@ -44,6 +44,7 @@ class Game:
   
   def catchUserInput(self):
     for e in pygame.event.get():
+      #print pygame.key.get_pressed()
       if e.type == pygame.QUIT:
         pygame.quit()
         exit()
@@ -72,7 +73,7 @@ class Game:
       pygame.draw.rect(self.screen, WHITE, self.ship.rect, 1)
       #print "Debug mode: Draw statistics"
       font = pygame.font.Font(None, 24)
-      speedMsg = "Spaceship angle: " + str(self.ship.angle)
+      speedMsg = "Spaceship direction: " + str(self.ship.direction)
       posMsg = "Spaceship position: " + str(self.ship.rect)
       textS = font.render(speedMsg, 1, GREEN)
       textP = font.render(posMsg, 1, GREEN)

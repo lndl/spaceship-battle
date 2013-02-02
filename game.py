@@ -25,6 +25,7 @@ from config import ConfigManager
 from space  import Space
 from utils  import *
 
+
 class Game:
   '''
   Main game class
@@ -44,23 +45,19 @@ class Game:
   
   def catchUserInput(self):
     for e in pygame.event.get():
-      #print pygame.key.get_pressed()
       if e.type == pygame.QUIT:
         pygame.quit()
         exit()
-      elif e.type == pygame.KEYDOWN:
-        if e.key == pygame.K_ESCAPE:
-          pygame.quit()
-          exit()
-        elif e.key == pygame.K_DOWN:
-          self.ship.moveBackward()
-        elif e.key == pygame.K_UP:
-          self.ship.moveForward()
-        elif e.key == pygame.K_LEFT:
-          self.ship.rotateLeft()
-        elif e.key == pygame.K_RIGHT:
-          self.ship.rotateRight()
-          
+    keysPressedList = pygame.key.get_pressed()
+    if keysPressedList[pygame.K_DOWN]:
+      self.ship.moveBackward()
+    if keysPressedList[pygame.K_UP]:
+      self.ship.moveForward() 
+    if keysPressedList[pygame.K_LEFT]:
+      self.ship.rotateLeft() 
+    if keysPressedList[pygame.K_RIGHT]:
+      self.ship.rotateRight()
+
   def updateGameState(self):
     pass 
   

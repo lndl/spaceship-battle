@@ -50,7 +50,7 @@ class Game:
     self.__setEventWireline()
     
   def __createEntities(self):
-    self.ship = Ship()
+    self.ship = Ship(100,100)
     self.sprites = [ShipSprite(self.ship)]
     self.space = Space(Game.RES)
     

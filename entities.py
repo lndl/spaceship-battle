@@ -21,19 +21,16 @@
 
 import pygame
 
-from config import ConfigManager
 from utils  import *
 from vector import Vector2D
 
-WIDTH, HEIGHT = ConfigManager.get("resolution")  
-    
 class Ship():
   '''
   Ship class (model)
   '''
   
-  def __init__(self):
-    self.center = Vector2D(HEIGHT / 2, WIDTH / 2)
+  def __init__(self, xPos, yPos):
+    self.center = Vector2D(xPos, yPos)
     self.direction = Vector2D(0,5) #Heading to 90 degrees
 
   def moveForward(self):

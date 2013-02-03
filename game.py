@@ -20,12 +20,15 @@
 #  
 
 import pygame
-from event         import *
+
+from events        import *
+from sprites       import *
+from entities      import *
+from utils         import *
+
 from event_manager import EventManager
-from ship          import Ship
 from config        import ConfigManager
 from space         import Space
-from utils         import *
 
 
 class Game:
@@ -48,6 +51,7 @@ class Game:
     
   def __createEntities(self):
     self.ship = Ship()
+    self.sprites = [ShipSprite(self.ship)]
     self.space = Space(Game.RES)
     
   def __setEventWireline(self):
@@ -73,24 +77,13 @@ class Game:
       self.eventManager.notify(KeyPressedRight)
 
   def updateGameState(self):
-    pass 
-  
+    pass
+    
   def updateDisplay(self):
     self.screen.fill(BLACK)
     self.screen.blit(self.space, self.space.rect)
-    self.screen.blit(self.ship.image, self.ship.rect)
-    if __debug__:
-      #print "Debug mode: Draw sprite's rects"
-      pygame.draw.rect(self.screen, WHITE, self.ship.rect, 1)
-      #print "Debug mode: Draw statistics"
-      font = pygame.font.Font(None, 24)
-      speedMsg = "Spaceship direction: " + str(self.ship.direction)
-      posMsg = "Spaceship position: " + str(self.ship.rect)
-      textS = font.render(speedMsg, 1, GREEN)
-      textP = font.render(posMsg, 1, GREEN)
-      self.screen.blit(textS, (10,10))
-      self.screen.blit(textP, (10,25))
-      
+    for sprite in self.sprites:
+      sprite.render(self.screen)
     pygame.display.flip()
     # pygame.display.update(self.ship.rect)
     pygame.time.wait(1000 / 60)

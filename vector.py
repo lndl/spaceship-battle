@@ -105,15 +105,16 @@ class Vector2D:
   
   def angle(self):
     ''' 
-    Return the angle between x-axis and this vector 
+    Return the angle between x-axis and this vector.
+    The range return value is [0,360)
     '''
-    if self.x > self.y:
-      radAngle = math.acos(1 / self.x)
-      return radAngle / math.pi * 180
-    else:
-      radAngle = math.asin(1 / self.y)
-      return radAngle / math.pi * 180
-    
+    radAngle = math.acos(self.x / self.magnitude())
+    degreeAngle = radAngle / math.pi * 180 #in [0,180) 
+    if self.y >= 0: return degreeAngle
+    else: 
+      if degreeAngle == 0: return 0
+      else: return 360 - (radAngle / math.pi * 180)
+      
   def __str__(self):
     ''' 
     String representation

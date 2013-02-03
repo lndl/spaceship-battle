@@ -1,4 +1,4 @@
-#  ship.py
+#  sprites.py
 #  
 #  Copyright 2013 Lautaro <laudleon@gmail.com>
 #  
@@ -17,31 +17,36 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
 #  
-#  
+#
 
 import pygame
 
 from config import ConfigManager
-from utils import *
 from vector import Vector2D
+from utils  import *
 
 WIDTH, HEIGHT = ConfigManager.get("resolution")  
     
-class Ship(pygame.sprite.Sprite):
+class ShipSprite(pygame.sprite.Sprite):
   '''
   Ship class (sprite)
-  '''
-  
-  def __init__ (self):
+  '''  
+
+  def __init__(self, model):
     pygame.sprite.Sprite.__init__(self)
+    self.model = model
     self.image = load_image("ship.png")
-    self.rect = self.image.get_rect()
-    self.center = Vector2D(HEIGHT / 2, WIDTH / 2)
-    self.rect.center = self.center.toPoint()
-    self.direction = Vector2D(0,5) #Heading to 90 degrees
+    self.rect  = self.image.get_rect()
     self.iImage = 90 / 10
     self.__initImageCache()
-    
+  
+  def render(self, screen):
+    xRenderCoord = (self.model.center.x, 480 - self.model.center.y)
+    self.rect.center = xRenderCoord
+    self.iImage = int(self.model.direction.angle() / 10)
+    self.image = self.cachedImages[self.iImage]
+    screen.blit(self.image, self.rect)
+  
   def __initImageCache(self):
     ''' 
     This fragments initialize all the spaceship rotation images
@@ -51,21 +56,3 @@ class Ship(pygame.sprite.Sprite):
     for angle in range(0,360,10):
       self.cachedImages += \
       [pygame.transform.rotate(self.image, (angle - 90))]
-
-  def moveForward(self):
-    self.center += self.direction.invY()
-    self.rect.center = self.center.toPoint()
-
-  def moveBackward(self):
-    self.center -= self.direction.invY()
-    self.rect.center = self.center.toPoint()
-    
-  def rotateLeft(self):
-    self.iImage = (self.iImage + 1) % (360 / 10)
-    self.direction = self.direction.rotate(10)
-    self.image = self.cachedImages[self.iImage]
-    
-  def rotateRight(self):
-    self.iImage = (self.iImage - 1) % (360 / 10)
-    self.direction = self.direction.rotate(-10)
-    self.image = self.cachedImages[self.iImage]

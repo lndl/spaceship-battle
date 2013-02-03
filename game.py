@@ -20,10 +20,12 @@
 #  
 
 import pygame
-from ship   import Ship
-from config import ConfigManager
-from space  import Space
-from utils  import *
+from event         import *
+from event_manager import EventManager
+from ship          import Ship
+from config        import ConfigManager
+from space         import Space
+from utils         import *
 
 
 class Game:
@@ -31,18 +33,30 @@ class Game:
   Main game class
   '''
   
+  RES  = ConfigManager.get("resolution")
+  
   def __init__ (self):
     pygame.init()
     pygame.key.set_repeat(10,10)
-    res  = ConfigManager.get("resolution")
     # Read and set fullscreen view
     isFS = ConfigManager.get("fullscreen")
     if isFS: FSFlag = pygame.HWSURFACE | pygame.FULLSCREEN
     else:    FSFlag = 0
-    self.screen = pygame.display.set_mode(res, pygame.DOUBLEBUF | FSFlag)
+    self.screen = pygame.display.set_mode(Game.RES, pygame.DOUBLEBUF | FSFlag)
+    self.__createEntities()
+    self.__setEventWireline()
+    
+  def __createEntities(self):
     self.ship = Ship()
-    self.space = Space(res)
-  
+    self.space = Space(Game.RES)
+    
+  def __setEventWireline(self):
+    self.eventManager = EventManager()
+    self.eventManager.connect(KeyPressedUp,    self.ship.moveForward)
+    self.eventManager.connect(KeyPressedDown,  self.ship.moveBackward)
+    self.eventManager.connect(KeyPressedLeft,  self.ship.rotateLeft)
+    self.eventManager.connect(KeyPressedRight, self.ship.rotateRight)
+    
   def catchUserInput(self):
     for e in pygame.event.get():
       if e.type == pygame.QUIT:
@@ -50,13 +64,13 @@ class Game:
         exit()
     keysPressedList = pygame.key.get_pressed()
     if keysPressedList[pygame.K_DOWN]:
-      self.ship.moveBackward()
+      self.eventManager.notify(KeyPressedDown)
     if keysPressedList[pygame.K_UP]:
-      self.ship.moveForward() 
+      self.eventManager.notify(KeyPressedUp) 
     if keysPressedList[pygame.K_LEFT]:
-      self.ship.rotateLeft() 
+      self.eventManager.notify(KeyPressedLeft) 
     if keysPressedList[pygame.K_RIGHT]:
-      self.ship.rotateRight()
+      self.eventManager.notify(KeyPressedRight)
 
   def updateGameState(self):
     pass 

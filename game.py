@@ -42,9 +42,8 @@ class Game:
     pygame.init()
     pygame.key.set_repeat(10,10)
     # Read and set fullscreen view
-    isFS = ConfigManager.get("fullscreen")
-    if isFS: FSFlag = pygame.HWSURFACE | pygame.FULLSCREEN
-    else:    FSFlag = 0
+    FSset = ConfigManager.get("fullscreen")
+    FSFlag = pygame.HWSURFACE | pygame.FULLSCREEN if FSset else 0
     self.screen = pygame.display.set_mode(Game.RES, pygame.DOUBLEBUF | FSFlag)
     self.__createEntities()
     self.__setEventWireline()
@@ -53,14 +52,14 @@ class Game:
     self.ship = Ship(100,100)
     self.sprites = [ShipSprite(self.ship)]
     self.space = Space(Game.RES)
-    
+  
   def __setEventWireline(self):
     self.eventManager = EventManager()
-    self.eventManager.connect(KeyPressedUp,    self.ship.moveForward)
-    self.eventManager.connect(KeyPressedDown,  self.ship.moveBackward)
-    self.eventManager.connect(KeyPressedLeft,  self.ship.rotateLeft)
-    self.eventManager.connect(KeyPressedRight, self.ship.rotateRight)
-    
+    self.eventManager.connect(PlayerMoveForwardEvent,    self.ship.moveForward)
+    self.eventManager.connect(PlayerMoveBackwardEvent,   self.ship.moveBackward)
+    self.eventManager.connect(PlayerRotateLeftEvent,     self.ship.rotateLeft)
+    self.eventManager.connect(PlayerRotateRightEvent,    self.ship.rotateRight)
+
   def catchUserInput(self):
     for e in pygame.event.get():
       if e.type == pygame.QUIT:
@@ -68,16 +67,18 @@ class Game:
         exit()
     keysPressedList = pygame.key.get_pressed()
     if keysPressedList[pygame.K_DOWN]:
-      self.eventManager.notify(KeyPressedDown)
+      self.eventManager.notify(PlayerMoveBackwardEvent)
     if keysPressedList[pygame.K_UP]:
-      self.eventManager.notify(KeyPressedUp) 
+      self.eventManager.notify(PlayerMoveForwardEvent) 
     if keysPressedList[pygame.K_LEFT]:
-      self.eventManager.notify(KeyPressedLeft) 
+      self.eventManager.notify(PlayerRotateLeftEvent) 
     if keysPressedList[pygame.K_RIGHT]:
-      self.eventManager.notify(KeyPressedRight)
+      self.eventManager.notify(PlayerRotateRightEvent)
 
   def updateGameState(self):
     pass
+    #for entity in self.entities:
+    #  entity.update()
     
   def updateDisplay(self):
     self.screen.fill(BLACK)

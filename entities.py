@@ -26,7 +26,7 @@ from vector import Vector2D
 
 class Ship():
   '''
-  Ship class (model)
+  Ship class (entity)
   '''
   
   def __init__(self, xPos, yPos):

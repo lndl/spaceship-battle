@@ -24,13 +24,11 @@
 
 class Event:
   pass
-class KeyPressed(Event):
+class PlayerMoveForwardEvent(Event):
   pass
-class KeyPressedUp(KeyPressed):
+class PlayerMoveBackwardEvent(Event):
   pass
-class KeyPressedDown(KeyPressed):
+class PlayerRotateLeftEvent(Event):
   pass
-class KeyPressedLeft(KeyPressed):
-  pass
-class KeyPressedRight(KeyPressed):
+class PlayerRotateRightEvent(Event):
   pass

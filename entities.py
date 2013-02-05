@@ -24,9 +24,9 @@ import pygame
 from utils  import *
 from vector import Vector2D
 
-class Ship():
+class PlayerShip():
   '''
-  Ship class (entity)
+  Player ship class (entity)
   '''
   
   def __init__(self, xPos, yPos):

@@ -49,16 +49,16 @@ class Game:
     self.__setEventWireline()
     
   def __createEntities(self):
-    self.ship = Ship(100,100)
-    self.sprites = [ShipSprite(self.ship)]
+    self.player = PlayerShip(100,100)
+    self.sprites = [ShipSprite(self.player)]
     self.space = Space(Game.RES)
   
   def __setEventWireline(self):
     self.eventManager = EventManager()
-    self.eventManager.connect(PlayerMoveForwardEvent,    self.ship.moveForward)
-    self.eventManager.connect(PlayerMoveBackwardEvent,   self.ship.moveBackward)
-    self.eventManager.connect(PlayerRotateLeftEvent,     self.ship.rotateLeft)
-    self.eventManager.connect(PlayerRotateRightEvent,    self.ship.rotateRight)
+    self.eventManager.connect(PlayerMoveForwardEvent,    self.player.moveForward)
+    self.eventManager.connect(PlayerMoveBackwardEvent,   self.player.moveBackward)
+    self.eventManager.connect(PlayerRotateLeftEvent,     self.player.rotateLeft)
+    self.eventManager.connect(PlayerRotateRightEvent,    self.player.rotateRight)
 
   def catchUserInput(self):
     for e in pygame.event.get():

@@ -45,38 +45,33 @@ class Game:
     FSset = ConfigManager.get("fullscreen")
     FSFlag = pygame.HWSURFACE | pygame.FULLSCREEN if FSset else 0
     self.screen = pygame.display.set_mode(Game.RES, pygame.DOUBLEBUF | FSFlag)
+    self.eventManager = EventManager()
     self.__createEntities()
-    self.__setEventWireline()
     
   def __createEntities(self):
     self.player = PlayerShip(100,100)
     self.sprites = [ShipSprite(self.player)]
     self.space = Space(Game.RES)
+    self.eventManager.suscribe(PlayerMoveEvent, self.player)
+    self.eventManager.suscribe(PlayerRotateEvent, self.player)
   
-  def __setEventWireline(self):
-    self.eventManager = EventManager()
-    self.eventManager.connect(PlayerMoveForwardEvent,    self.player.moveForward)
-    self.eventManager.connect(PlayerMoveBackwardEvent,   self.player.moveBackward)
-    self.eventManager.connect(PlayerRotateLeftEvent,     self.player.rotateLeft)
-    self.eventManager.connect(PlayerRotateRightEvent,    self.player.rotateRight)
-
   def catchUserInput(self):
     for e in pygame.event.get():
       if e.type == pygame.QUIT:
         pygame.quit()
         exit()
     keysPressedList = pygame.key.get_pressed()
-    if keysPressedList[pygame.K_DOWN]:
-      self.eventManager.notify(PlayerMoveBackwardEvent)
     if keysPressedList[pygame.K_UP]:
-      self.eventManager.notify(PlayerMoveForwardEvent) 
+      self.eventManager.notify(PlayerMoveEvent(PlayerMoveEvent.FORWARD))
+    if keysPressedList[pygame.K_DOWN]:
+      self.eventManager.notify(PlayerMoveEvent(PlayerMoveEvent.BACKWARD))
     if keysPressedList[pygame.K_LEFT]:
-      self.eventManager.notify(PlayerRotateLeftEvent) 
+      self.eventManager.notify(PlayerRotateEvent(1)) 
     if keysPressedList[pygame.K_RIGHT]:
-      self.eventManager.notify(PlayerRotateRightEvent)
+      self.eventManager.notify(PlayerRotateEvent(2))
 
   def updateGameState(self):
-    pass
+    self.eventManager.processEvents()
     #for entity in self.entities:
     #  entity.update()
     

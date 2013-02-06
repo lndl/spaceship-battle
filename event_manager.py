@@ -19,32 +19,52 @@
 #  
 #  
 
+from collections import deque
+
 class EventManager:
   '''
   Handles all the event-messaging system
   '''
   
   def __init__ (self):
-    self.eventMap = {}
+    self.eventQueue = deque()
+    self.eventMap   = dict()
     
-  def connect(self, event, method):
+  def suscribe(self, eventClass, listener):
     ''' 
-    Creates a conection between an user-defined event
-    and a method/function to be executed when that event
-    be procesed
+    Suscribes a listener (by default, an entity) to an
+    event ocurrence.
     '''
-    if event not in self.eventMap:
-      self.eventMap[event] = []
-    self.eventMap[event] += [method]
+    if eventClass.__name__ not in self.eventMap:
+      self.eventMap[eventClass.__name__] = []
+    self.eventMap[eventClass.__name__] += [listener]
+
+  def unsuscribe(self, eventClass, listener):
+    '''
+    Unsuscribes an listener from an event. 
+    '''
+    try:
+      if listener in self.eventMap[eventClass.__name__]:
+        del self.eventMap[eventClass.__name__]
+    except KeyError:
+      print "WARNING: listener not found in event listener list"
+      pass #Ignore the exception
 
   def notify(self, event):
     ''' 
-    Notifies the ocurrence of an event, calling all the
-    methods related to it 
+    Notifies the ocurrence of an event
     '''
-    if event in self.eventMap:
-      for method in self.eventMap[event]:
-        method() #call method to handle the event
-    else:
-      pass #ignore unregistered events
-      
+    self.eventQueue.append(event)
+    
+  def processEvents(self):
+    ''' 
+    Consume the event queue, dispatching all the events
+    to the listeners, by using a double-dispatching mechanism
+    '''
+    while self.eventQueue: #queue is not empty
+      e = self.eventQueue.popleft()
+      if e.__class__.__name__ in self.eventMap:
+        for listener in self.eventMap[e.__class__.__name__]:
+          e.dispatch(listener)
+      else:
+        pass #Ignore no-mapped events (No suscribers for it)

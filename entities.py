@@ -21,10 +21,11 @@
 
 import pygame
 
+from events import *
 from utils  import *
 from vector import Vector2D
 
-class PlayerShip():
+class PlayerShip(EventListener):
   '''
   Player ship class (entity)
   '''
@@ -44,3 +45,17 @@ class PlayerShip():
     
   def rotateRight(self):
     self.direction = self.direction.rotate(-10)
+
+  # Event Listener: interface implementation
+
+  def processPlayerMoveEvent(self, event):
+    if event.isForward():
+      self.moveForward()
+    elif event.isBackward():
+      self.moveBackward()
+
+  def processPlayerRotateEvent(self, event):
+    if event.isLeft():
+      self.rotateLeft()
+    elif event.isRight():
+      self.rotateRight()

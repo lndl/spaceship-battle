@@ -19,16 +19,53 @@
 #  
 #  
 
-#  Event classes. They merely represent symbols or messages
-#  instead of pure classes
+class EventListener:
+  '''
+  A event listener is an interface for all those entities who 
+  wants to react to events generated in the game. 
+  '''
+  
+  def processPlayerMoveEvent(self, event):
+    pass
+  
+  def processPlayerRotateEvent(self, event):
+    pass  
 
 class Event:
-  pass
-class PlayerMoveForwardEvent(Event):
-  pass
-class PlayerMoveBackwardEvent(Event):
-  pass
-class PlayerRotateLeftEvent(Event):
-  pass
-class PlayerRotateRightEvent(Event):
-  pass
+  
+  def dispatch(self, listener):
+    raise NotImplementedError("Please, implement \"dispach\" method")
+
+class PlayerMoveEvent(Event):
+  
+  FORWARD  = 1
+  BACKWARD = 2
+  
+  def __init__(self, where):
+    self.where = where
+  
+  def isForward(self):
+    return self.where == PlayerMoveEvent.FORWARD
+    
+  def isBackward(self):
+    return self.where == PlayerMoveEvent.BACKWARD
+    
+  def dispatch(self, listener):
+    listener.processPlayerMoveEvent(self)
+  
+class PlayerRotateEvent(Event):
+
+  LEFT  = 1
+  RIGHT = 2
+  
+  def __init__(self, where):
+    self.where = where
+  
+  def isLeft(self):
+    return self.where == PlayerRotateEvent.LEFT
+    
+  def isRight(self):
+    return self.where == PlayerRotateEvent.RIGHT
+
+  def dispatch(self, listener):
+    listener.processPlayerRotateEvent(self)

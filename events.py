@@ -69,3 +69,11 @@ class PlayerRotateEvent(Event):
 
   def dispatch(self, listener):
     listener.processPlayerRotateEvent(self)
+
+class LaserShootEvent(Event):
+  
+  def __init__(self, source):
+    self.source = source
+  
+  def dispatch(self, listener):
+    listener.processLaserShootEvent(self)

@@ -26,7 +26,8 @@ class EventManager:
   Handles all the event-messaging system
   '''
   
-  def __init__ (self):
+  def __init__ (self, game):
+    self.game       = game
     self.eventQueue = deque()
     self.eventMap   = dict()
     

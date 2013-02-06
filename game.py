@@ -27,8 +27,10 @@ from entities      import *
 from utils         import *
 
 from event_manager import EventManager
+from laser_manager import LaserManager
 from config        import ConfigManager
 from space         import Space
+
 
 
 class Game:
@@ -45,13 +47,15 @@ class Game:
     FSset = ConfigManager.get("fullscreen")
     FSFlag = pygame.HWSURFACE | pygame.FULLSCREEN if FSset else 0
     self.screen = pygame.display.set_mode(Game.RES, pygame.DOUBLEBUF | FSFlag)
-    self.eventManager = EventManager()
+    self.eventManager = EventManager(self)
+    self.laserManager = LaserManager(self)
     self.__createEntities()
     
   def __createEntities(self):
     self.player = PlayerShip(100,100)
     self.sprites = [ShipSprite(self.player)]
     self.space = Space(Game.RES)
+    #FIXME: Should be auto-suscriptions
     self.eventManager.suscribe(PlayerMoveEvent, self.player)
     self.eventManager.suscribe(PlayerRotateEvent, self.player)
   
@@ -69,9 +73,12 @@ class Game:
       self.eventManager.notify(PlayerRotateEvent(1)) 
     if keysPressedList[pygame.K_RIGHT]:
       self.eventManager.notify(PlayerRotateEvent(2))
+    if keysPressedList[pygame.K_SPACE]:
+      self.eventManager.notify(LaserShootEvent(self.player))
 
   def updateGameState(self):
     self.eventManager.processEvents()
+    self.laserManager.updateLasers()
     #for entity in self.entities:
     #  entity.update()
     
@@ -80,6 +87,7 @@ class Game:
     self.screen.blit(self.space, self.space.rect)
     for sprite in self.sprites:
       sprite.render(self.screen)
+    self.laserManager.renderLasers()
     pygame.display.flip()
     # pygame.display.update(self.ship.rect)
     pygame.time.wait(1000 / 60)

@@ -21,6 +21,7 @@
 
 import pygame
 
+from copy   import copy
 from events import *
 from utils  import *
 from vector import Vector2D
@@ -59,3 +60,12 @@ class PlayerShip(EventListener):
       self.rotateLeft()
     elif event.isRight():
       self.rotateRight()
+  
+class Laser():
+  
+  def __init__(self, origin, direction):
+    self.center    = copy(origin)
+    self.direction = copy(direction)
+
+  def update(self):
+    self.center += self.direction

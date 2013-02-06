@@ -32,18 +32,18 @@ class ShipSprite(pygame.sprite.Sprite):
   Ship class (sprite)
   '''  
 
-  def __init__(self, model):
+  def __init__(self, entity):
     pygame.sprite.Sprite.__init__(self)
-    self.model = model
+    self.entity = entity
     self.image = load_image("ship.png")
     self.rect  = self.image.get_rect()
     self.iImage = 90 / 10
     self.__initImageCache()
   
   def render(self, screen):
-    xRenderCoord = (self.model.center.x, 480 - self.model.center.y)
+    xRenderCoord = (self.entity.center.x, 480 - self.entity.center.y)
     self.rect.center = xRenderCoord
-    self.iImage = int(self.model.direction.angle() / 10)
+    self.iImage = int(self.entity.direction.angle() / 10)
     self.image = self.cachedImages[self.iImage]
     screen.blit(self.image, self.rect)
   
@@ -56,3 +56,15 @@ class ShipSprite(pygame.sprite.Sprite):
     for angle in range(0,360,10):
       self.cachedImages += \
       [pygame.transform.rotate(self.image, (angle - 90))]
+
+class LaserSprite(pygame.sprite.Sprite):
+
+  def __init__(self, entity):
+    pygame.sprite.Sprite.__init__(self)
+    self.entity = entity
+  
+  def render(self, screen):
+    startLine = (self.entity.center.x, 480 - self.entity.center.y)
+    endLine = (startLine[0] + 5, startLine[1] + 5)
+    pygame.draw.aaline(screen, GREEN, startLine, endLine)  
+  

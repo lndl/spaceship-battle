@@ -49,11 +49,16 @@ class Game:
     self.screen = pygame.display.set_mode(Game.RES, pygame.DOUBLEBUF | FSFlag)
     self.eventManager = EventManager(self)
     self.laserManager = LaserManager(self)
+    self.sprites = []
     self.__createEntities()
     
   def __createEntities(self):
     self.player = PlayerShip(100,100)
-    self.sprites = [ShipSprite(self.player)]
+    self.enemy = EnemyShip(600,400)
+    playerShipImage = load_image("shipP.png")
+    enemyShipImage  = load_image("shipE1.png")
+    self.sprites += [ShipSprite(self.player, playerShipImage)]
+    self.sprites += [ShipSprite(self.enemy,   enemyShipImage)] 
     self.space = Space(Game.RES)
     #FIXME: Should be auto-suscriptions
     self.eventManager.suscribe(PlayerMoveEvent, self.player)
@@ -79,6 +84,7 @@ class Game:
   def updateGameState(self):
     self.eventManager.processEvents()
     self.laserManager.updateLasers()
+    self.enemy.update()
     #for entity in self.entities:
     #  entity.update()
     

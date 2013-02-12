@@ -32,19 +32,20 @@ class ShipSprite(pygame.sprite.Sprite):
   Ship class (sprite)
   '''  
 
-  def __init__(self, entity):
+  def __init__(self, entity, image):
     pygame.sprite.Sprite.__init__(self)
     self.entity = entity
-    self.image = load_image("ship.png")
+    self.image = image
     self.rect  = self.image.get_rect()
     self.iImage = 90 / 10
     self.__initImageCache()
   
   def render(self, screen):
-    xRenderCoord = (self.entity.center.x, 480 - self.entity.center.y)
-    self.rect.center = xRenderCoord
+    renderCoord = (self.entity.center.x, 480 - self.entity.center.y)
+    self.rect.center = renderCoord
     self.iImage = int(self.entity.direction.angle() / 10)
     self.image = self.cachedImages[self.iImage]
+    pygame.draw.ellipse(screen, GREEN, self.rect, 2)
     screen.blit(self.image, self.rect)
   
   def __initImageCache(self):
@@ -52,10 +53,25 @@ class ShipSprite(pygame.sprite.Sprite):
     This fragments initialize all the spaceship rotation images
     in order to speed up the performance when driving the ship.
     '''
+    originalRect = self.image.get_rect()
     self.cachedImages = []
     for angle in range(0,360,10):
-      self.cachedImages += \
-      [pygame.transform.rotate(self.image, (angle - 90))]
+      rotatedImage = pygame.transform.rotate(self.image, (angle - 90))
+      rotatedRect  = rotatedImage.get_rect()
+      
+      # Derive a Rect that is the same size as the original, but offset just a tad
+      # to compensate for the rotation.  Specifically, offset by half of the total
+      # growth, because that growth is evenly distributed on both sides of the
+      # rotated image.
+      clippedRect = pygame.Rect(
+        (rotatedRect.width - originalRect.width) / 2,
+        (rotatedRect.height - originalRect.height) / 2,
+        originalRect.width,
+        originalRect.height,
+      )
+      
+      rotatedImage = rotatedImage.subsurface(clippedRect)
+      self.cachedImages += [rotatedImage]
 
 class LaserSprite(pygame.sprite.Sprite):
 

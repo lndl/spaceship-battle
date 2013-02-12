@@ -60,7 +60,19 @@ class PlayerShip(EventListener):
       self.rotateLeft()
     elif event.isRight():
       self.rotateRight()
+      
+class EnemyShip:
+  '''
+  Enemy ship (entity class)
+  '''
   
+  def __init__(self, xPos, yPos):
+    self.center = Vector2D(xPos, yPos)
+    self.direction = Vector2D(0,1) #Heading to 90 degrees
+   
+  def update(self):
+    pass
+    
 class Laser():
   
   def __init__(self, origin, direction):

@@ -31,7 +31,7 @@ class Space(pygame.Surface):
   def __init__ (self, resolution):
     pygame.Surface.__init__(self, resolution)
     self.starsSprites =  []
-    self.starsSprites += [load_image("star1.png")]
+    # self.starsSprites += [load_image("star1.png")] #ugly image
     self.starsSprites += [load_image("star2.png")]
     self.rect = self.get_rect()
     self.__populateSpace()

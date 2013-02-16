@@ -45,6 +45,7 @@ class ShipSprite(pygame.sprite.Sprite):
     self.rect.center = renderCoord
     self.iImage = int(self.entity.direction.angle() / 10)
     self.image = self.cachedImages[self.iImage]
+    pygame.draw.rect(screen, RED, self.rect, 2)
     pygame.draw.ellipse(screen, GREEN, self.rect, 2)
     screen.blit(self.image, self.rect)
   

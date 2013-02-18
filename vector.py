@@ -52,6 +52,16 @@ class Vector2D:
     - operator 
     '''
     return Vector2D(self.x - other.x, self.y - other.y)
+  
+  def __mul__(self, other):
+    ''' 
+    Performs a scalar multiplication (if other is a int)
+    or a dot product (if other is a vector)
+    '''
+    if isinstance(other, int) or isinstance(other, float):
+      return Vector2D(other * self.x, other * self.y)
+    elif isinstance(other, Vector2D):
+      return Vector2D(other.x * self.x, other.y * self.y)
     
   def __iadd__(self, other):
     ''' 
@@ -68,12 +78,19 @@ class Vector2D:
     self.x -= other.x
     self.y -= other.y
     return self
-    
+  
   def magnitude(self):
     ''' 
     Length or magnitude
     '''
     return math.sqrt((self.x ** 2) + (self.y ** 2))
+  
+  def distanceFrom(self, anotherVector):
+    '''
+    Returns the distance beetween this vector 
+    and another vector, passed as a parameter
+    '''
+    return (self - anotherVector).magnitude() 
   
   def rotate(self, angle):
     ''' 

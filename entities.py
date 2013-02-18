@@ -25,15 +25,19 @@ from copy   import copy
 from events import *
 from utils  import *
 from vector import Vector2D
+from circle import Circle
 
 class PlayerShip(EventListener):
   '''
   Player ship class (entity)
   '''
   
+  ratioSize = 50
+  
   def __init__(self, xPos, yPos):
     self.center = Vector2D(xPos, yPos)
     self.direction = Vector2D(0,5) #Heading to 90 degrees
+    self.body = Circle(self.center, PlayerShip.ratioSize)
 
   def moveForward(self):
     self.center += self.direction
@@ -66,9 +70,12 @@ class EnemyShip:
   Enemy ship (entity class)
   '''
   
+  ratioSize = 50
+  
   def __init__(self, xPos, yPos):
     self.center = Vector2D(xPos, yPos)
     self.direction = Vector2D(0,1) #Heading to 90 degrees
+    self.body = Circle(self.center, EnemyShip.ratioSize)
    
   def update(self):
     pass
@@ -77,7 +84,7 @@ class Laser():
   
   def __init__(self, origin, direction):
     self.center    = copy(origin)
-    self.direction = copy(direction)
+    self.direction = copy(direction) * 2
 
   def update(self):
     self.center += self.direction

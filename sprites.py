@@ -21,13 +21,14 @@
 
 import pygame
 
+from events import *
 from config import ConfigManager
 from vector import Vector2D
 from utils  import *
 
 WIDTH, HEIGHT = ConfigManager.get("resolution")  
     
-class ShipSprite(pygame.sprite.Sprite):
+class ShipSprite(pygame.sprite.Sprite, EventListener):
   '''
   Ship class (sprite)
   '''  
@@ -43,10 +44,11 @@ class ShipSprite(pygame.sprite.Sprite):
   def render(self, screen):
     renderCoord = (self.entity.center.x, 480 - self.entity.center.y)
     self.rect.center = renderCoord
-    self.iImage = int(self.entity.direction.angle() / 10)
+    # Seems to propagate flotating-point errors
+    # self.iImage = int(self.entity.direction.angle() / 10)
     self.image = self.cachedImages[self.iImage]
-    pygame.draw.rect(screen, RED, self.rect, 2)
-    pygame.draw.ellipse(screen, GREEN, self.rect, 2)
+    # pygame.draw.rect(screen, RED, self.rect, 2)
+    # pygame.draw.ellipse(screen, GREEN, self.rect, 2)
     screen.blit(self.image, self.rect)
   
   def __initImageCache(self):
@@ -74,6 +76,14 @@ class ShipSprite(pygame.sprite.Sprite):
       rotatedImage = rotatedImage.subsurface(clippedRect)
       self.cachedImages += [rotatedImage]
 
+  # Event Listener: interface implementation
+
+  def processPlayerRotateEvent(self, event):
+    if event.isLeft():
+        self.iImage = (self.iImage + 1) % len(self.cachedImages)
+    elif event.isRight():
+        self.iImage = (self.iImage - 1) % len(self.cachedImages)
+  
 class LaserSprite(pygame.sprite.Sprite):
 
   def __init__(self, entity):
@@ -81,7 +91,9 @@ class LaserSprite(pygame.sprite.Sprite):
     self.entity = entity
   
   def render(self, screen):
-    startLine = (self.entity.center.x, 480 - self.entity.center.y)
-    endLine = (startLine[0] + 5, startLine[1] + 5)
-    pygame.draw.aaline(screen, GREEN, startLine, endLine)  
+    cenE = self.entity.center
+    dirE = self.entity.direction
+    startLine = (cenE.x, 480 - cenE.y)
+    endLine = (startLine[0] + dirE.x, startLine[1] - dirE.y)
+    pygame.draw.line(screen, GREEN, startLine, endLine, 3)
   

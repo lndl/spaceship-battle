@@ -57,12 +57,14 @@ class Game:
     self.enemy = EnemyShip(600,400)
     playerShipImage = load_image("shipP.png")
     enemyShipImage  = load_image("shipE1.png")
-    self.sprites += [ShipSprite(self.player, playerShipImage)]
+    playerShipSprite = ShipSprite(self.player, playerShipImage) 
+    self.sprites += [playerShipSprite]
     self.sprites += [ShipSprite(self.enemy,   enemyShipImage)] 
     self.space = Space(Game.RES)
     #FIXME: Should be auto-suscriptions
     self.eventManager.suscribe(PlayerMoveEvent, self.player)
     self.eventManager.suscribe(PlayerRotateEvent, self.player)
+    self.eventManager.suscribe(PlayerRotateEvent, playerShipSprite)
   
   def catchUserInput(self):
     for e in pygame.event.get():
@@ -81,7 +83,15 @@ class Game:
     if keysPressedList[pygame.K_SPACE]:
       self.eventManager.notify(LaserShootEvent(self.player))
 
+  def detectCollisions(self):
+    ''' 
+    
+    '''
+    if(self.player.body.isCollidingWith(self.enemy.body)):
+      print "I collided with the enemy"
+
   def updateGameState(self):
+    self.detectCollisions()
     self.eventManager.processEvents()
     self.laserManager.updateLasers()
     self.enemy.update()

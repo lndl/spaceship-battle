@@ -1,4 +1,4 @@
-#  laser_manager.py
+#  game_object.py
 #  
 #  Copyright 2013 Lautaro <laudleon@gmail.com>
 #  
@@ -17,34 +17,20 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
 #  
-#  
 
-from events   import *
-from entities import * 
-from sprites  import *
-
-class LaserManager(EventListener):
+class GameObject:
+  '''
+  Game object sums an entity -which manages the logic- 
+  and a sprite -which manages the visual representation
+  of an object and how it renderize-
+  '''
   
-  def __init__(self, game):
-    self.game = game
-    self.laserEntities = []
-    self.laserSprites = []
-    #Auto-suscribes to Laser Shoot Event
-    self.game.eventManager.suscribe(LaserShootEvent, self)
-    
-  def createLaser(self, source):
-    l  = Laser(source.center, source.direction)
-    self.laserEntities += [l]
-    ls = LaserSprite(l)
-    self.laserSprites += [ls]
-    
-  def processLaserShootEvent(self, event):
-    self.createLaser(event.source)
+  def __init__(self, entity, sprite):
+    self.entity = entity
+    self.sprite = sprite
 
-  def updateLasers(self):
-    for l in self.laserEntities:
-      l.update()
-  
-  def renderLasers(self):
-    for l in self.laserSprites:
-      l.render(self.game.screen)
+  def update(self):
+    self.entity.update()
+
+  def render(self, surface):
+    self.sprite.render(surface, self.entity)

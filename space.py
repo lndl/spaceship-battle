@@ -39,7 +39,7 @@ class Space(pygame.Surface):
   def __populateSpace (self):
     ''' 
     Fills space with random stars sprites
-    !!! Future improves: Implements a slot-based randomize mechanism to
+    TODO: Implements a slot-based randomize mechanism to
     prevent stars sprites overlapping
     '''
     import random

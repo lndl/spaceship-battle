@@ -29,7 +29,10 @@ class EventListener:
     pass
   
   def processPlayerRotateEvent(self, event):
-    pass  
+    pass
+    
+  def processPlayerLaserShootEvent(self, event):
+    pass
 
 class Event:
   
@@ -77,3 +80,11 @@ class LaserShootEvent(Event):
   
   def dispatch(self, listener):
     listener.processLaserShootEvent(self)
+
+class PlayerLaserShootEvent(LaserShootEvent):
+  
+  def __init__(self):
+    pass
+    
+  def dispatch(self, listener):
+    listener.processPlayerLaserShootEvent(self)

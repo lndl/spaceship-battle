@@ -38,3 +38,7 @@ class ConfigManager:
   @classmethod
   def get(self, attr):
     return ConfigManager.configurations[attr]
+  
+  @classmethod  
+  def set(self, key, attr):
+    ConfigManager.configurations[key] = attr

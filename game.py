@@ -30,7 +30,7 @@ from event_manager import EventManager
 from laser_manager import LaserManager
 from config        import ConfigManager
 from space         import Space
-
+from go_manager    import GOManager
 
 
 class Game:
@@ -39,33 +39,26 @@ class Game:
   '''
   
   RES  = ConfigManager.get("resolution")
+  __instance = None
+  
+  @classmethod
+  def instance(cls):
+    if cls.__instance is None:
+      cls.__instance = Game()
+      ConfigManager.game = cls.__instance
+    return cls.__instance
   
   def __init__ (self):
     pygame.init()
     pygame.key.set_repeat(10,10)
     # Read and set fullscreen view
     FSset = ConfigManager.get("fullscreen")
-    FSFlag = pygame.HWSURFACE | pygame.FULLSCREEN if FSset else 0
+    FSFlag = (pygame.HWSURFACE | pygame.FULLSCREEN) if FSset else 0
     self.screen = pygame.display.set_mode(Game.RES, pygame.DOUBLEBUF | FSFlag)
-    self.eventManager = EventManager(self)
-    self.laserManager = LaserManager(self)
-    self.sprites = []
-    self.__createEntities()
-    
-  def __createEntities(self):
-    self.player = PlayerShip(100,100)
-    self.enemy = EnemyShip(600,400)
-    playerShipImage = load_image("shipP.png")
-    enemyShipImage  = load_image("shipE1.png")
-    playerShipSprite = ShipSprite(self.player, playerShipImage) 
-    self.sprites += [playerShipSprite]
-    self.sprites += [ShipSprite(self.enemy,   enemyShipImage)] 
+    self.evManager = EventManager(self)
+    self.goManager = GOManager(self)
     self.space = Space(Game.RES)
-    #FIXME: Should be auto-suscriptions
-    self.eventManager.suscribe(PlayerMoveEvent, self.player)
-    self.eventManager.suscribe(PlayerRotateEvent, self.player)
-    self.eventManager.suscribe(PlayerRotateEvent, playerShipSprite)
-  
+    
   def catchUserInput(self):
     for e in pygame.event.get():
       if e.type == pygame.QUIT:
@@ -73,37 +66,31 @@ class Game:
         exit()
     keysPressedList = pygame.key.get_pressed()
     if keysPressedList[pygame.K_UP]:
-      self.eventManager.notify(PlayerMoveEvent(PlayerMoveEvent.FORWARD))
+      self.evManager.notify(PlayerMoveEvent(PlayerMoveEvent.FORWARD))
     if keysPressedList[pygame.K_DOWN]:
-      self.eventManager.notify(PlayerMoveEvent(PlayerMoveEvent.BACKWARD))
+      self.evManager.notify(PlayerMoveEvent(PlayerMoveEvent.BACKWARD))
     if keysPressedList[pygame.K_LEFT]:
-      self.eventManager.notify(PlayerRotateEvent(1)) 
+      self.evManager.notify(PlayerRotateEvent(1)) 
     if keysPressedList[pygame.K_RIGHT]:
-      self.eventManager.notify(PlayerRotateEvent(2))
+      self.evManager.notify(PlayerRotateEvent(2))
     if keysPressedList[pygame.K_SPACE]:
-      self.eventManager.notify(LaserShootEvent(self.player))
+      self.evManager.notify(PlayerLaserShootEvent())
 
   def detectCollisions(self):
     ''' 
     
     '''
-    if(self.player.body.isCollidingWith(self.enemy.body)):
-      print "I collided with the enemy"
-
+    pass
+  
   def updateGameState(self):
     self.detectCollisions()
-    self.eventManager.processEvents()
-    self.laserManager.updateLasers()
-    self.enemy.update()
-    #for entity in self.entities:
-    #  entity.update()
+    self.evManager.processEvents()
+    self.goManager.updateAll()
     
   def updateDisplay(self):
     self.screen.fill(BLACK)
     self.screen.blit(self.space, self.space.rect)
-    for sprite in self.sprites:
-      sprite.render(self.screen)
-    self.laserManager.renderLasers()
+    self.goManager.renderAll()
     pygame.display.flip()
     # pygame.display.update(self.ship.rect)
     pygame.time.wait(1000 / 60)
@@ -115,5 +102,4 @@ class Game:
       self.updateDisplay()
     
 if __name__ == "__main__":
-  game = Game()
-  game.run()
+  Game.instance().run()

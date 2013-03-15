@@ -34,10 +34,14 @@ class PlayerShip(EventListener):
   
   ratioSize = 50
   
-  def __init__(self, xPos, yPos):
+  def __init__(self, game, xPos, yPos):
+    self.game = game
     self.center = Vector2D(xPos, yPos)
-    self.direction = Vector2D(0,5) #Heading to 90 degrees
+    self.direction = Vector2D(0,7) #Heading to 90 degrees
     self.body = Circle(self.center, PlayerShip.ratioSize)
+    self.game.evManager.suscribe(PlayerMoveEvent, self)
+    self.game.evManager.suscribe(PlayerRotateEvent, self)
+    self.game.evManager.suscribe(PlayerLaserShootEvent, self)
 
   def moveForward(self):
     self.center += self.direction
@@ -50,6 +54,9 @@ class PlayerShip(EventListener):
     
   def rotateRight(self):
     self.direction = self.direction.rotate(-10)
+
+  def update(self):
+    pass
 
   # Event Listener: interface implementation
 
@@ -64,7 +71,10 @@ class PlayerShip(EventListener):
       self.rotateLeft()
     elif event.isRight():
       self.rotateRight()
-      
+  
+  def processPlayerLaserShootEvent(self, event):
+    self.game.goManager.addLaserObject(self)
+    
 class EnemyShip:
   '''
   Enemy ship (entity class)
@@ -72,17 +82,24 @@ class EnemyShip:
   
   ratioSize = 50
   
-  def __init__(self, xPos, yPos):
-    self.center = Vector2D(xPos, yPos)
-    self.direction = Vector2D(0,1) #Heading to 90 degrees
+  def __init__(self, game, xPos, yPos):
+    self.game      = game
+    self.center    = Vector2D(xPos, yPos)
+    self.direction = Vector2D(0,-7) #Heading to 270 degrees
     self.body = Circle(self.center, EnemyShip.ratioSize)
-   
+    self.laserTimer = 0
+
   def update(self):
-    pass
-    
+    if self.laserTimer > 100:
+      self.game.goManager.addLaserObject(self)
+      self.laserTimer  = 0
+    else:
+      self.laserTimer += 1
+
 class Laser():
-  
-  def __init__(self, origin, direction):
+
+  def __init__(self, game, origin, direction):
+    self.game      = game
     self.center    = copy(origin)
     self.direction = copy(direction) * 2
 

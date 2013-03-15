@@ -33,16 +33,15 @@ class ShipSprite(pygame.sprite.Sprite, EventListener):
   Ship class (sprite)
   '''  
 
-  def __init__(self, entity, image):
+  def __init__(self, image):
     pygame.sprite.Sprite.__init__(self)
-    self.entity = entity
     self.image = image
     self.rect  = self.image.get_rect()
     self.iImage = 90 / 10
     self.__initImageCache()
   
-  def render(self, screen):
-    renderCoord = (self.entity.center.x, 480 - self.entity.center.y)
+  def render(self, screen, entity):
+    renderCoord = (entity.center.x, 480 - entity.center.y)
     self.rect.center = renderCoord
     # Seems to propagate flotating-point errors
     # self.iImage = int(self.entity.direction.angle() / 10)
@@ -86,13 +85,12 @@ class ShipSprite(pygame.sprite.Sprite, EventListener):
   
 class LaserSprite(pygame.sprite.Sprite):
 
-  def __init__(self, entity):
+  def __init__(self):
     pygame.sprite.Sprite.__init__(self)
-    self.entity = entity
   
-  def render(self, screen):
-    cenE = self.entity.center
-    dirE = self.entity.direction
+  def render(self, screen, entity):
+    cenE = entity.center
+    dirE = entity.direction
     startLine = (cenE.x, 480 - cenE.y)
     endLine = (startLine[0] + dirE.x, startLine[1] - dirE.y)
     pygame.draw.line(screen, GREEN, startLine, endLine, 3)

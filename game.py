@@ -27,11 +27,9 @@ from entities      import *
 from utils         import *
 
 from event_manager import EventManager
-from laser_manager import LaserManager
 from config        import ConfigManager
 from space         import Space
 from go_manager    import GOManager
-
 
 class Game:
   '''

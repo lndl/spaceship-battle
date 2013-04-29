@@ -29,6 +29,15 @@ class GameObject:
     self.entity = entity
     self.sprite = sprite
 
+  def collidedWith(self, anotherGO):
+    ''' 
+    Function doc 
+    '''
+    self.entity.collidedWith(anotherGO.entity)
+    
+  def isOnCollisionWith(self, anotherGO):
+    return self.entity.isOnCollisionWith(anotherGO.entity)
+
   def update(self):
     self.entity.update()
 

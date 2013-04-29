@@ -25,9 +25,29 @@ from copy   import copy
 from events import *
 from utils  import *
 from vector import Vector2D
-from circle import Circle
+from shapes import *
 
-class PlayerShip(EventListener):
+class GameEntity(EventListener):
+  
+  def __init__(self, game, center, direction, body):
+    self.game = game
+    self.center = center
+    self.direction = direction
+    self.body = body
+
+  def isOnCollisionWith(self, anotherEntity):
+    return self.body.isCollidingWith(anotherEntity.body)
+
+  def collidedWith(self, anotherEntity):
+    raise NotImplementedError("Missing collision action")
+
+  def update(self):
+    ''' 
+    Not mandatory the entity update
+    '''
+    pass
+
+class PlayerShip(GameEntity):
   '''
   Player ship class (entity)
   '''
@@ -35,13 +55,15 @@ class PlayerShip(EventListener):
   ratioSize = 50
   
   def __init__(self, game, xPos, yPos):
-    self.game = game
-    self.center = Vector2D(xPos, yPos)
-    self.direction = Vector2D(0,7) #Heading to 90 degrees
-    self.body = Circle(self.center, PlayerShip.ratioSize)
+    super(PlayerShip, self).__init__(game, 
+          Vector2D(xPos, yPos), Vector2D(0,5), 
+          Circle(Vector2D(xPos, yPos), PlayerShip.ratioSize))
+    
     self.game.evManager.suscribe(PlayerMoveEvent, self)
     self.game.evManager.suscribe(PlayerRotateEvent, self)
     self.game.evManager.suscribe(PlayerLaserShootEvent, self)
+    self.game.evManager.suscribe(LaserCollisionEvent, self)
+    self.game.evManager.suscribe(EnemyCollisionEvent, self)
 
   def moveForward(self):
     self.center += self.direction
@@ -54,9 +76,9 @@ class PlayerShip(EventListener):
     
   def rotateRight(self):
     self.direction = self.direction.rotate(-10)
-
-  def update(self):
-    pass
+    
+  def collidedWith(self, anotherEntity):
+    self.game.evManager.notify(PlayerCollisionEvent(self, anotherEntity))
 
   # Event Listener: interface implementation
 
@@ -71,11 +93,11 @@ class PlayerShip(EventListener):
       self.rotateLeft()
     elif event.isRight():
       self.rotateRight()
-  
+
   def processPlayerLaserShootEvent(self, event):
     self.game.goManager.addLaserObject(self)
-    
-class EnemyShip:
+
+class EnemyShip(GameEntity):
   '''
   Enemy ship (entity class)
   '''
@@ -83,25 +105,38 @@ class EnemyShip:
   ratioSize = 50
   
   def __init__(self, game, xPos, yPos):
-    self.game      = game
-    self.center    = Vector2D(xPos, yPos)
-    self.direction = Vector2D(0,-7) #Heading to 270 degrees
-    self.body = Circle(self.center, EnemyShip.ratioSize)
+    super(EnemyShip, self).__init__(game, 
+          Vector2D(xPos, yPos), Vector2D(0,-1),
+          Circle(Vector2D(xPos, yPos), EnemyShip.ratioSize))
+    self.game.evManager.suscribe(PlayerCollisionEvent, self)
+    self.game.evManager.suscribe(LaserCollisionEvent,  self)
     self.laserTimer = 0
 
   def update(self):
     if self.laserTimer > 100:
-      self.game.goManager.addLaserObject(self)
+      #self.game.goManager.addLaserObject(self)
       self.laserTimer  = 0
     else:
       self.laserTimer += 1
-
-class Laser():
+  
+  def collidedWith(self, anotherEntity):
+    self.game.evManager.notify(EnemyCollisionEvent(self, anotherEntity))
+  
+  def processLaserCollisionEvent(self, event):
+    print "Un Laser choco contra el enemigo"
+  
+  def processPlayerCollisionEvent(self, event):
+    print "El jugador humando choco contra el enemigo"
+  
+class Laser(GameEntity):
 
   def __init__(self, game, origin, direction):
-    self.game      = game
-    self.center    = copy(origin)
-    self.direction = copy(direction) * 2
+    super(Laser, self).__init__(game, 
+          copy(origin), copy(direction) * 2, 
+          Line(origin, origin + direction))
 
   def update(self):
     self.center += self.direction
+    
+  def collidedWith(self, anotherEntity):
+    self.game.evManager.notify(LaserCollisionEvent(self, anotherEntity))

@@ -75,16 +75,21 @@ class Game:
       self.evManager.notify(PlayerRotateEvent(2))
     if keysPressedList[pygame.K_SPACE]:
       self.evManager.notify(PlayerLaserShootEvent())
-
+  
   def detectCollisions(self):
     ''' 
-    
+    Function doc 
     '''
-    pass
-  
+    goList  = self.goManager.gameObjects
+    gllen   = range(0, len(goList))
+    colList = [(goList[i],goList[j]) for i in gllen for j in gllen if i > j]
+    for x,y in colList:
+      if x.isOnCollisionWith(y):
+        x.collidedWith(y)
+
   def updateGameState(self):
-    self.detectCollisions()
     self.evManager.processEvents()
+    self.detectCollisions()
     self.goManager.updateAll()
     
   def updateDisplay(self):

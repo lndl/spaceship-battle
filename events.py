@@ -19,7 +19,7 @@
 #  
 #  
 
-class EventListener:
+class EventListener(object):
   '''
   A event listener is an interface for all those entities who 
   wants to react to events generated in the game. 
@@ -32,6 +32,15 @@ class EventListener:
     pass
     
   def processPlayerLaserShootEvent(self, event):
+    pass
+
+  def processPlayerCollisionEvent(self, event):
+    pass
+    
+  def processEnemyCollisionEvent(self, event):
+    pass
+    
+  def processLaserCollisionEvent(self, event):
     pass
 
 class Event:
@@ -88,3 +97,24 @@ class PlayerLaserShootEvent(LaserShootEvent):
     
   def dispatch(self, listener):
     listener.processPlayerLaserShootEvent(self)
+
+class CollisionEvent(Event):
+  
+  def __init__(self, source, ec):
+    self.whoCollide      = source
+    self.withWhatCollide = ec
+  
+class PlayerCollisionEvent(CollisionEvent):
+
+  def dispatch(self, listener):
+    listener.processPlayerCollisionEvent(self)
+
+class EnemyCollisionEvent(CollisionEvent):
+
+  def dispatch(self, listener):
+    listener.processEnemyCollisionEvent(self)
+
+class LaserCollisionEvent(CollisionEvent):
+
+  def dispatch(self, listener):
+    listener.processLaserCollisionEvent(self)

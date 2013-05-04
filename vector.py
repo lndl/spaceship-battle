@@ -136,4 +136,4 @@ class Vector2D:
     ''' 
     String representation
     '''
-    return "Vector2D: (%f,%f)" % self.x, self.y
+    return "V-2D: (%.2f,%.2f)" % (self.x, self.y)

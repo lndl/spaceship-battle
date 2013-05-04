@@ -38,7 +38,7 @@ class PygameDebugOutput:
     return cls.__instance
   
   def __init__ (self, msgInitCoord):
-    self.font     = pygame.font.Font(None, 28)
+    self.font     = pygame.font.Font(None, 18)
     self.msgQueue = deque()
     self.msgInit  = msgInitCoord 
 

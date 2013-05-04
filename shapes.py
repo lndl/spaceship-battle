@@ -37,13 +37,19 @@ class Circle(Shape):
   A circle class with collision-detection support
   '''
   
-  def __init__(self, center, ratio):
+  def __init__(self, center, radius):
     '''
     Initializes a circle with a ratio (double type)
     and a center (vector type)
     '''
-    self.ratio  = ratio
+    self.radius  = radius
     self.center = center
+  
+  def __str__(self):
+    ''' 
+    String representation
+    '''
+    return "Circle: (Center = %s, Radius = %.2f)" % (self.center, self.radius)
   
   def isCollidingWith(self, aShape):
     return aShape.isCollidingWithCircle(self)
@@ -53,9 +59,9 @@ class Circle(Shape):
     Test if this circle and other are in collision
     '''
     cA = self.center
-    rA = self.ratio
+    rA = self.radius
     cB = aCircle.center
-    rB = aCircle.ratio
+    rB = aCircle.radius
     return cA.distanceFrom(cB) < (rA + rB)
 
   def isCollidingWithLine(self, aLine):
@@ -64,8 +70,8 @@ class Circle(Shape):
     FIXME: This is a fast and naive collision detection method, but not
     very acurate. May be add a discriminant mechanism or something... 
     '''
-    return ( (aLine.start.distanceFrom(self.center) < self.ratio) or
-              (aLine.start.distanceFrom(self.center) < self.ratio) ) 
+    return ( (aLine.start.distanceFrom(self.center) < self.radius) or
+              (aLine.start.distanceFrom(self.center) < self.radius) ) 
 
 class Line(Shape):
   

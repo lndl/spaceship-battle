@@ -113,6 +113,9 @@ class EnemyShip(GameEntity):
     self.laserTimer = 0
 
   def update(self):
+    if __debug__:
+      from pygame_debug_output import PygameDebugOutput
+      PygameDebugOutput.instance().log("Enemy body: " + str(self.body))
     if self.laserTimer > 100:
       #self.game.goManager.addLaserObject(self)
       self.laserTimer  = 0

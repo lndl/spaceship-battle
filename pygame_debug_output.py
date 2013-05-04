@@ -21,7 +21,6 @@
 
 from collections import deque
 from utils       import *
-from game        import *
 
 import pygame.font
 
@@ -35,11 +34,10 @@ class PygameDebugOutput:
   @classmethod
   def instance(cls):
     if cls.__instance is None:
-      cls.__instance = PygameDebugOutput(Game.instance(), (10,10))
+      cls.__instance = PygameDebugOutput((10,10))
     return cls.__instance
   
-  def __init__ (self, game, msgInitCoord):
-    self.game     = game
+  def __init__ (self, msgInitCoord):
     self.font     = pygame.font.Font(None, 28)
     self.msgQueue = deque()
     self.msgInit  = msgInitCoord 
@@ -51,13 +49,13 @@ class PygameDebugOutput:
     text = self.font.render(msg, 1, RED)
     self.msgQueue.append(text)
 
-  def render(self):
+  def render(self, screenToBlit):
     '''
-    render the queues messages over the pygame display
+    render the queues messages over a screen
     '''
     i = 0
     while self.msgQueue:
       msg = self.msgQueue.popleft()
       blitCoord = (self.msgInit[0], self.msgInit[1] + i)
-      self.game.screen.blit(msg, blitCoord)
+      screenToBlit.blit(msg, blitCoord)
       i += 10

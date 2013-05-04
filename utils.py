@@ -41,5 +41,3 @@ def load_image(filename, transparent=False):
   except pygame.error, message:
     print "Fallo la carga de una imagen"
     raise SystemExit, message
-
-

@@ -94,6 +94,10 @@ class Game:
     self.screen.fill(BLACK)
     self.screen.blit(self.space, self.space.rect)
     self.goManager.renderAll()
+    if __debug__:
+      from pygame_debug_output import PygameDebugOutput
+      # PygameDebugOutput.instance().log("Hello world!")
+      PygameDebugOutput.instance().render(self.screen)
     pygame.display.flip()
     # pygame.display.update(self.ship.rect)
     pygame.time.wait(1000 / 60)
